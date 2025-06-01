@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Task, TaskDocument } from './schemas/task.schema';
+import { Task, TaskDocument, TaskStatus } from './schemas/task.schema';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
@@ -56,5 +56,14 @@ export class TasksService {
       throw new NotFoundException(`Task with ID ${id} not found`);
     }
     return updatedTask;
+  }
+
+  async findTasksWithDeadline(deadline: Date): Promise<TaskDocument[]> {
+    return this.taskModel
+      .find({
+        deadline: { $lte: deadline },
+        status: { $ne: TaskStatus.DONE },
+      })
+      .exec();
   }
 }
