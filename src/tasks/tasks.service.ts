@@ -10,9 +10,14 @@ export class TasksService {
   constructor(@InjectModel(Task.name) private taskModel: Model<TaskDocument>) {}
 
   async create(createTaskDto: CreateTaskDto, userId: string): Promise<Task> {
+    const deadline = new Date(createTaskDto.deadline);
+    deadline.setHours(23, 59, 59, 999);
+    const { labels, ...rest } = createTaskDto;
     const createdTask = new this.taskModel({
-      ...createTaskDto,
+      ...rest,
+      deadline,
       userId,
+      labels: labels || [],
     });
     return createdTask.save();
   }
@@ -30,8 +35,14 @@ export class TasksService {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto, userId: string): Promise<Task> {
+    if (updateTaskDto.deadline) {
+      const deadline = new Date(updateTaskDto.deadline);
+      deadline.setHours(23, 59, 59, 999);
+      updateTaskDto.deadline = deadline.toISOString();
+    }
+    const { labels, ...rest } = updateTaskDto;
     const updatedTask = await this.taskModel
-      .findOneAndUpdate({ _id: id, userId }, updateTaskDto, { new: true })
+      .findOneAndUpdate({ _id: id, userId }, { ...rest, labels: labels || [] }, { new: true })
       .populate('labels')
       .exec();
     if (!updatedTask) {

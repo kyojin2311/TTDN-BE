@@ -24,6 +24,9 @@ export class Task {
   @Prop({ required: true })
   userId: string; // Firebase uid
 
+  @Prop({ required: true, get: (v) => v.toISOString() })
+  deadline: Date;
+
   @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Label' }] })
   labels: Label[];
 }

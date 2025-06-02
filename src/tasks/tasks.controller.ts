@@ -27,6 +27,7 @@ export class TasksController {
   @ApiOperation({ summary: 'Create a new task' })
   @ApiResponse({ status: 201, description: 'The task has been successfully created.', type: Task })
   create(@Body() createTaskDto: CreateTaskDto, @Request() req) {
+    console.log('API called: POST /tasks');
     return this.tasksService.create(createTaskDto, req.user.uid);
   }
 
@@ -34,6 +35,7 @@ export class TasksController {
   @ApiOperation({ summary: 'Get all tasks' })
   @ApiResponse({ status: 200, description: 'Return all tasks.', type: [Task] })
   findAll(@Request() req) {
+    console.log('API called: GET /tasks');
     return this.tasksService.findAll(req.user.uid);
   }
 
@@ -41,6 +43,7 @@ export class TasksController {
   @ApiOperation({ summary: 'Get a task by id' })
   @ApiResponse({ status: 200, description: 'Return the task.', type: Task })
   findOne(@Param('id') id: string, @Request() req) {
+    console.log(`API called: GET /tasks/${id}`);
     return this.tasksService.findOne(id, req.user.uid);
   }
 
@@ -48,6 +51,7 @@ export class TasksController {
   @ApiOperation({ summary: 'Update a task' })
   @ApiResponse({ status: 200, description: 'The task has been successfully updated.', type: Task })
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto, @Request() req) {
+    console.log(`API called: PATCH /tasks/${id}`);
     return this.tasksService.update(id, updateTaskDto, req.user.uid);
   }
 
@@ -55,12 +59,14 @@ export class TasksController {
   @ApiOperation({ summary: 'Delete a task' })
   @ApiResponse({ status: 200, description: 'The task has been successfully deleted.' })
   remove(@Param('id') id: string, @Request() req) {
+    console.log(`API called: DELETE /tasks/${id}`);
     return this.tasksService.remove(id, req.user.uid);
   }
 
   @Patch(':id/status')
   @ApiOperation({ summary: 'Update task status' })
   updateStatus(@Param('id') id: string, @Body('status') status: string, @Request() req) {
+    console.log(`API called: PATCH /tasks/${id}/status`);
     return this.tasksService.updateStatus(id, status, req.user.uid);
   }
 }
